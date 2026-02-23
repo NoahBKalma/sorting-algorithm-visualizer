@@ -17,9 +17,3 @@ def bubble_sort(arr):
 				yield arr.copy(), j, j+1, "swap"
 
 		arr_limit = last_swap
-
-
-sort = bubble_sort(list(reversed(range(5))))
-
-for array, j, i, action in sort:
-	print(array, j, i, action)
