@@ -28,12 +28,15 @@ def plot_graph(canvas, curr_list, j, k, step_type):
             canvas.create_rectangle(x1, y1, x2, y2, fill="lightblue")
 
 def animate_graph(canvas, algorithm_gen, speed):
+    
+    curr_speed = 101- (speed.get())**2
+
     try:
         curr_list, j, k, step_type = curr_step = next(algorithm_gen)
         plot_graph(canvas, curr_list, j, k, step_type)
-        canvas.after(speed, animate_graph, canvas, algorithm_gen, speed)
+        canvas.after(curr_speed, animate_graph, canvas, algorithm_gen, speed)
     except StopIteration:
-        return 0
+        pass
 
 def main():
 
@@ -67,19 +70,22 @@ def main():
     # Create slider for speed change
     speed_slider = tk.Scale(options_frame, from_=1, to=10, orient=tk.HORIZONTAL, label="Animation Speed", length=200)
     speed_slider.set(1)
-    speed_slider.grid(row=0,column=3, padx=10, pady=10)
-    animate_speed = 1000 - speed_slider.get()*100
+    speed_slider.grid(row=0,column=4, padx=10, pady=10)
        
     # Add input box for array size
-    array_size_label = ttk.Label(options_frame, text="Array Size:", font=("Arial", 12))
-    array_size_label.grid(row=0,column=1, padx=(10,0), pady=10)
+    array_size_label = ttk.Label(options_frame, text="Array Size:", font=("Arial", 11))
+    array_size_label.grid(row=0,column=2, padx=(10,0), pady=10)
     
-    array_size = tk.Entry(options_frame, width=10)
-    array_size.grid(row=0,column=2, padx=10, pady=10)
+    array_size = tk.Entry(options_frame, width=10, font=("Arial", 11))
+    array_size.grid(row=0,column=3, padx=10, pady=10)
     
     # Create button to run algorithm
-    run_algorithm_button = tk.Button(options_frame, text="Run Algorithm", font=("Arial", 10), command=lambda: run_algorithm(array_size.get()))
-    run_algorithm_button.grid(row=0,column=0, padx=10, pady=10)
+    run_algorithm_button = tk.Button(options_frame, text="Run Algorithm", font=("Arial", 11), command=lambda: run_algorithm(array_size.get()))
+    run_algorithm_button.grid(row=0,column=1, padx=10, pady=10)
+    
+    # Create button to quit current algorithm
+    quit_algorithm_button = tk.Button(options_frame, text="Quit Algorithm", font=("Arial", 11))
+    quit_algorithm_button.grid(row=0,column=0, padx=10, pady=10)
     
     # Function to run the selected algorithm
     def run_algorithm(list_size):
@@ -91,7 +97,7 @@ def main():
             case "Bubble Sort":
                 print("Running Bubble Sort")
                 bubble_sort_gen = bubble_sort(list_to_sort)
-                canvas.after(animate_speed, animate_graph, canvas, bubble_sort_gen, animate_speed)
+                canvas.after(speed_slider.get(), animate_graph, canvas, bubble_sort_gen, speed_slider)
             case "Selection Sort":
                 print("Running Selection Sort")
             case "Insertion Sort":
