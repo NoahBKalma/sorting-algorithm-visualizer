@@ -3,6 +3,7 @@ from tkinter import ttk
 from random import shuffle
 
 from Algorithms.bubble_sort import bubble_sort
+from Algorithms.selection_sort import selection_sort
   
 
 def plot_graph(canvas, curr_list, j, k, step_type):
@@ -29,7 +30,7 @@ def plot_graph(canvas, curr_list, j, k, step_type):
 
 def animate_graph(canvas, algorithm_gen, speed):
     
-    curr_speed = 101- (speed.get())**2
+    curr_speed = 1001 - ((speed.get())**2)*10
 
     try:
         curr_list, j, k, step_type = curr_step = next(algorithm_gen)
@@ -90,7 +91,10 @@ def main():
     # Function to run the selected algorithm
     def run_algorithm(list_size):
         
-        list_to_sort = list(range(1, int(list_size)+1))
+        try:
+            list_to_sort = list(range(1, int(list_size)+1))
+        except ValueError:
+            return 0
         shuffle(list_to_sort)
                 
         match selected_algorithm.get():
@@ -100,6 +104,8 @@ def main():
                 canvas.after(speed_slider.get(), animate_graph, canvas, bubble_sort_gen, speed_slider)
             case "Selection Sort":
                 print("Running Selection Sort")
+                selection_sort_gen = selection_sort(list_to_sort)
+                canvas.after(speed_slider.get(), animate_graph, canvas, selection_sort_gen, speed_slider)
             case "Insertion Sort":
                 print("Running Insertion Sort")
     
