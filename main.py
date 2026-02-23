@@ -3,11 +3,13 @@ from tkinter import ttk
 from random import shuffle
 
 from Algorithms.bubble_sort import bubble_sort
+from Algorithms.insertion_sort import insertion_sort
 from Algorithms.selection_sort import selection_sort
   
 
 def plot_graph(canvas, curr_list, j, k, step_type):
     
+    # Resets the canvas
     canvas.delete("all")
         
     canvas_width = canvas.winfo_width()
@@ -15,12 +17,15 @@ def plot_graph(canvas, curr_list, j, k, step_type):
     rect_width = canvas_width / len(curr_list)
     
     for i in range(len(curr_list)):
+        
+        # Calculate the size and position of rectangle
         rect_height = (curr_list[i] / max(curr_list)) * canvas_height
         x1 = i * rect_width
         x2 = (i+1) * rect_width
         y1 = canvas_height - rect_height
         y2 = canvas_height
         
+        # Draws rectangles with colors corresponding to use in current step
         if step_type == "comparison" and (i == j or i == k):
             canvas.create_rectangle(x1, y1, x2, y2, fill="green")
         elif step_type == "swap" and (i == j or i == k):
@@ -29,9 +34,14 @@ def plot_graph(canvas, curr_list, j, k, step_type):
             canvas.create_rectangle(x1, y1, x2, y2, fill="lightblue")
 
 def animate_graph(canvas, algorithm_gen, speed):
+    '''
+    Animates the graph by repeatedly calling the plot_graph function with the current state of the algorithm.
+    '''
     
+    # Calculate the current speed based on the slider value and convert it to a delay in milliseconds
     curr_speed = 1001 - ((speed.get())**2)*10
 
+    # Continues until the generator is exhausted
     try:
         curr_list, j, k, step_type = curr_step = next(algorithm_gen)
         plot_graph(canvas, curr_list, j, k, step_type)
@@ -90,13 +100,18 @@ def main():
     
     # Function to run the selected algorithm
     def run_algorithm(list_size):
+        '''
+        Runs the selected algorithm by creating a generator with a randomly shuffled list of the specified size.
+        '''
         
+        # Creates the shuffled list as long as the input is valid, otherwise returns 1
         try:
             list_to_sort = list(range(1, int(list_size)+1))
         except ValueError:
-            return 0
+            return 1
         shuffle(list_to_sort)
                 
+        # Chooses which algorithm to run 
         match selected_algorithm.get():
             case "Bubble Sort":
                 print("Running Bubble Sort")
@@ -108,6 +123,8 @@ def main():
                 canvas.after(speed_slider.get(), animate_graph, canvas, selection_sort_gen, speed_slider)
             case "Insertion Sort":
                 print("Running Insertion Sort")
+                insertion_sort_gen = insertion_sort(list_to_sort)
+                canvas.after(speed_slider.get(), animate_graph, canvas, insertion_sort_gen, speed_slider)
     
     # Create title for selected algorithm
     selected_algorithm_title = ttk.Label(root, text="Selected Algorithm: " + selected_algorithm.get())
