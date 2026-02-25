@@ -5,6 +5,7 @@ from random import shuffle
 from Algorithms.bubble_sort import bubble_sort
 from Algorithms.insertion_sort import insertion_sort
 from Algorithms.selection_sort import selection_sort
+from Algorithms.merge_sort import merge_sort
   
 
 def plot_graph(canvas, curr_list, j, k, step_type):
@@ -63,7 +64,7 @@ def main():
     title.pack()
     
     # Create and pack the algorithm selector
-    algorithms = ["Bubble Sort", "Selection Sort", "Insertion Sort"]
+    algorithms = ["Bubble Sort", "Selection Sort", "Insertion Sort", "Merge Sort"]
     selected_algorithm = tk.StringVar()
 
     algorithm_dropdown = ttk.Combobox(root, values=algorithms, textvariable=selected_algorithm, state="readonly", width=20)
@@ -116,15 +117,19 @@ def main():
             case "Bubble Sort":
                 print("Running Bubble Sort")
                 bubble_sort_gen = bubble_sort(list_to_sort)
-                canvas.after(speed_slider.get(), animate_graph, canvas, bubble_sort_gen, speed_slider)
+                canvas.after(int(speed_slider.get()), animate_graph, canvas, bubble_sort_gen, speed_slider)
             case "Selection Sort":
                 print("Running Selection Sort")
                 selection_sort_gen = selection_sort(list_to_sort)
-                canvas.after(speed_slider.get(), animate_graph, canvas, selection_sort_gen, speed_slider)
+                canvas.after(int(speed_slider.get()), animate_graph, canvas, selection_sort_gen, speed_slider)
             case "Insertion Sort":
                 print("Running Insertion Sort")
                 insertion_sort_gen = insertion_sort(list_to_sort)
-                canvas.after(speed_slider.get(), animate_graph, canvas, insertion_sort_gen, speed_slider)
+                canvas.after(int(speed_slider.get()), animate_graph, canvas, insertion_sort_gen, speed_slider)
+            case "Merge Sort":
+                print("Running Merge Sort")
+                merge_sort_gen = merge_sort(list_to_sort)
+                canvas.after(int(speed_slider.get()), animate_graph, canvas, merge_sort_gen, speed_slider)
     
     # Create title for selected algorithm
     selected_algorithm_title = ttk.Label(root, text="Selected Algorithm: " + selected_algorithm.get())
