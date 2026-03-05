@@ -1,14 +1,18 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import Event, Message, ttk
 from random import shuffle
+import time
 
-from Algorithms.bubble_sort import bubble_sort
-from Algorithms.insertion_sort import insertion_sort
-from Algorithms.selection_sort import selection_sort
-from Algorithms.merge_sort import merge_sort
+from algorithms.bubble_sort import bubble_sort
+from algorithms.insertion_sort import insertion_sort
+from algorithms.selection_sort import selection_sort
+from algorithms.merge_sort import merge_sort
   
 
 def plot_graph(canvas, curr_list, j, k, step_type):
+    '''
+    Draws the graph on the canvas and highlights rectangles per step
+    '''
     
     # Resets the canvas
     canvas.delete("all")
@@ -34,11 +38,14 @@ def plot_graph(canvas, curr_list, j, k, step_type):
         else:
             canvas.create_rectangle(x1, y1, x2, y2, fill="lightblue")
 
-def animate_graph(canvas, algorithm_gen, speed):
+def animate_graph(canvas, algorithm_gen, speed, run_algorithm_button):
     '''
     Animates the graph by repeatedly calling the plot_graph function with the current state of the algorithm.
     '''
     
+    # Stores ID in case the user wants to quit
+    global animation_id
+
     # Calculate the current speed based on the slider value and convert it to a delay in milliseconds
     curr_speed = 1001 - ((speed.get())**2)*10
 
@@ -46,16 +53,38 @@ def animate_graph(canvas, algorithm_gen, speed):
     try:
         curr_list, j, k, step_type = curr_step = next(algorithm_gen)
         plot_graph(canvas, curr_list, j, k, step_type)
-        canvas.after(curr_speed, animate_graph, canvas, algorithm_gen, speed)
+        animation_id = canvas.after(curr_speed, animate_graph, canvas, algorithm_gen, speed, run_algorithm_button)
     except StopIteration:
+        run_algorithm_button.config(state="active")
+
+def benchmark_algorithm_ms(algorithm, arr):
+    '''
+    Runs the algorithm independently to see time
+    '''
+
+    arr_copy = arr.copy()
+    start = time.perf_counter()
+    # exhaust the generator
+    for _ in algorithm(arr_copy):
         pass
+
+    end = time.perf_counter()
+    return (end - start)*1000000
 
 def main():
 
     # Create the main window
     root = tk.Tk()
     root.title("Sorting Algorithm Visualizer")
-    
+
+    # Set focus on whatever is pressed
+    def set_focus(event):
+        try:
+            event.widget.focus_set()
+        except AttributeError:
+            return
+    root.bind_all("<Button-1>", set_focus)
+
     # Set the window size
     root.geometry("700x600")
     
@@ -72,7 +101,8 @@ def main():
     algorithm_dropdown.pack()
     
     # Create Canvas for the algorithms to be drawn on
-    canvas = tk.Canvas(root, width=600, height=400, bg="gray")    
+    canvas = tk.Canvas(root, width=600, height=400, bg="gray") 
+    canvas.config(highlightthickness=0)   
     canvas.pack()
     
     # Create frame to house the options for the algorithm
@@ -82,6 +112,7 @@ def main():
     # Create slider for speed change
     speed_slider = tk.Scale(options_frame, from_=1, to=10, orient=tk.HORIZONTAL, label="Animation Speed", length=200)
     speed_slider.set(1)
+    speed_slider.config(highlightthickness=0)
     speed_slider.grid(row=0,column=4, padx=10, pady=10)
        
     # Add input box for array size
@@ -96,8 +127,16 @@ def main():
     run_algorithm_button.grid(row=0,column=1, padx=10, pady=10)
     
     # Create button to quit current algorithm
-    quit_algorithm_button = tk.Button(options_frame, text="Quit Algorithm", font=("Arial", 11))
+    quit_algorithm_button = tk.Button(options_frame, text="Quit Algorithm", font=("Arial", 11), command=lambda: quit_algorithm())
     quit_algorithm_button.grid(row=0,column=0, padx=10, pady=10)
+
+    def quit_algorithm():
+        global animation_id
+        if animation_id is not None:
+            canvas.after_cancel(animation_id)
+            animation_id = None
+            canvas.delete("all")
+            run_algorithm_button.config(state="active")
     
     # Function to run the selected algorithm
     def run_algorithm(list_size):
@@ -105,31 +144,43 @@ def main():
         Runs the selected algorithm by creating a generator with a randomly shuffled list of the specified size.
         '''
         
-        # Creates the shuffled list as long as the input is valid, otherwise returns 1
+        # Creates the shuffled list as long as the input is valid, otherwise displays message and exits
         try:
             list_to_sort = list(range(1, int(list_size)+1))
         except ValueError:
-            return 1
+            print("Error in list size")
+            return
         shuffle(list_to_sort)
                 
+        # Disables run button to prevent multiple graphs animating at once
+        run_algorithm_button.config(state="disabled")
+
         # Chooses which algorithm to run 
         match selected_algorithm.get():
             case "Bubble Sort":
                 print("Running Bubble Sort")
+                print(benchmark_algorithm_ms(bubble_sort, list_to_sort))
                 bubble_sort_gen = bubble_sort(list_to_sort)
-                canvas.after(int(speed_slider.get()), animate_graph, canvas, bubble_sort_gen, speed_slider)
+                canvas.after(int(speed_slider.get()), animate_graph, canvas, bubble_sort_gen, speed_slider, run_algorithm_button)
             case "Selection Sort":
                 print("Running Selection Sort")
+                print(benchmark_algorithm_ms(selection_sort, list_to_sort))
                 selection_sort_gen = selection_sort(list_to_sort)
-                canvas.after(int(speed_slider.get()), animate_graph, canvas, selection_sort_gen, speed_slider)
+                canvas.after(int(speed_slider.get()), animate_graph, canvas, selection_sort_gen, speed_slider, run_algorithm_button)
             case "Insertion Sort":
                 print("Running Insertion Sort")
+                print(benchmark_algorithm_ms(insertion_sort, list_to_sort))
                 insertion_sort_gen = insertion_sort(list_to_sort)
-                canvas.after(int(speed_slider.get()), animate_graph, canvas, insertion_sort_gen, speed_slider)
+                canvas.after(int(speed_slider.get()), animate_graph, canvas, insertion_sort_gen, speed_slider, run_algorithm_button)
             case "Merge Sort":
                 print("Running Merge Sort")
+                print(benchmark_algorithm_ms(merge_sort, list_to_sort))
                 merge_sort_gen = merge_sort(list_to_sort)
-                canvas.after(int(speed_slider.get()), animate_graph, canvas, merge_sort_gen, speed_slider)
+                canvas.after(int(speed_slider.get()), animate_graph, canvas, merge_sort_gen, speed_slider, run_algorithm_button)
+            case _:
+                # Re-enables run button after running the sorting animation
+                run_algorithm_button.config(state="active")
+
     
     # Create title for selected algorithm
     selected_algorithm_title = ttk.Label(root, text="Selected Algorithm: " + selected_algorithm.get())
