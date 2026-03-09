@@ -5,7 +5,6 @@ The program uses Tkinter to animate sorting operations step-by-step, highlightin
 
 This tool is useful for learning how common sorting algorithms behave and for visually understanding their performance differences.
 
----
 
 ## Features
 
@@ -17,7 +16,6 @@ This tool is useful for learning how common sorting algorithms behave and for vi
   - Swaps
 - Benchmark timing for each algorithm
 
----
 
 ## Implemented Algorithms
 
@@ -28,12 +26,35 @@ This tool is useful for learning how common sorting algorithms behave and for vi
 
 Each algorithm is implemented in the `algorithms/` folder and designed as a generator that yields intermediate steps for visualization.
 
----
 
-## Installation
+## Requirements
+
+- Python 3.10+
+- Tkinter (included with most Python installations)
+
+
+## Installation/Usage
 
 ### 1. Clone the repository
 
 ```bash
 git clone https://github.com/NoahBKalma/sorting-algorithm-visualizer
-cd sorting-visualizer
+```
+
+### 2. Run the main application
+
+```bash
+python main.py
+```
+
+### Steps:
+- Select a sorting algorithm
+- Enter an array size
+- Adjust the speed slider
+- Click Run Algorithm
+
+- Keybinds:
+  - Escape Key: Quit algorithm
+  - Enter Key: Run algorithm
+  - Left Arrow Key: Decrease speed
+  - Right Arrow Key: Increase speed

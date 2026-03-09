@@ -98,7 +98,7 @@ def main():
             event.widget.focus_set()
         except AttributeError:
             return
-    root.bind_all("<Button-1>", set_focus)
+    root.bind("<Button-1>", set_focus)
 
     # Set the window size
     root_width = 1000
@@ -168,20 +168,32 @@ def main():
     time_frame.grid(column=3, row=0)
 
     # Add label to time frame
-    time_complexity = tk.StringVar(value = f"Time Complexity: ")
+    time_complexity = tk.StringVar(value=f"Time Complexity: ")
     ttk.Label(time_frame, textvariable=time_complexity,  font=("Arial Rounded MT", 14)).pack()
 
-    time = tk.StringVar(value="000.0 microseconds")
+    time_benchmark = tk.StringVar(value="000.0 microseconds")
 
     # Add time to the frame
-    time_display = ttk.Label(time_frame, textvariable=time, font=("Arial Rounded MT", 12))
+    time_display = ttk.Label(time_frame, textvariable=time_benchmark, font=("Arial Rounded MT", 12))
     time_display.pack(padx=40, pady=10)
 
     # Create Canvas for the algorithms to be drawn on
     canvas = tk.Canvas(root, width=650, height=400, bg="gray") 
     canvas.config(highlightthickness=0)   
     canvas.pack(pady=(10,0))
-    
+
+    # Create legend on canvas
+    legend = tk.Frame(canvas, width=130, height=50, bg="alice blue")
+    legend.place(x=10, y=10)
+    legend.propagate(False)
+
+    # Add labels to legend
+    comp_label = ttk.Label(legend, text="Green: Comparison", foreground="green", background="alice blue", font=("Arial Rounded MT", 10))
+    comp_label.pack(side="top", anchor="nw", padx=(5,0), pady=(5,0))
+
+    swap_label = ttk.Label(legend, text="Red: Swap", foreground="red", background="alice blue", font=("Arial Rounded MT", 10))
+    swap_label.pack(side="bottom", anchor="sw", padx=(5,0), pady=(0,5))
+
     # Create frame to house the options for the algorithm
     options_frame = tk.Frame(root)
     options_frame.pack()
@@ -211,14 +223,14 @@ def main():
     run_algorithm_button = tk.Button(options_frame, text="Run Algorithm", font=("Arial Rounded MT", 13), command=lambda: run_algorithm(array_size.get()))
     run_algorithm_button.config(width=15, height=2, justify="center")
     run_algorithm_button.grid(row=0,column=1, padx=10, pady=(10,0))
-    
+
     # Create button to quit current algorithm
     quit_algorithm_button = tk.Button(options_frame, text="Quit Algorithm", font=("Arial Rounded MT", 13), command=lambda: quit_algorithm())
     quit_algorithm_button.config(width=15, height=2, justify="center")
     quit_algorithm_button.grid(row=0,column=0, padx=10, pady=(10,0))
 
     # Funcion to cancel animation
-    def quit_algorithm():
+    def quit_algorithm(event=None):
         global animation_id
         try:
             if animation_id is not None:
@@ -243,12 +255,15 @@ def main():
 
         # Creates the shuffled list as long as the input is valid, otherwise displays message and exits
         try:
-            list_to_sort = list(range(1, int(list_size)+1))
+            if int(list_size) > 1:
+                list_to_sort = list(range(1, int(list_size)+1))
+            else:
+                user_message.config(text="Invalid Array Size")
+                return
+            shuffle(list_to_sort)
         except ValueError:
-            print("Error in list size")
-            user_message.config(text="Invalid Array Size")
-            return
-        shuffle(list_to_sort)
+                user_message.config(text="Invalid Array Size Input")
+                return
                 
         # Disables run button to prevent multiple graphs animating at once
         run_algorithm_button.config(state="disabled")
@@ -256,23 +271,19 @@ def main():
         # Chooses which algorithm to run 
         match selected_algorithm.get():
             case "Bubble Sort":
-                time.set(benchmark_algorithm_microseconds(bubble_sort, list_to_sort))
-                print(f"Running Bubble Sort: {time.get()}")
+                time_benchmark.set(benchmark_algorithm_microseconds(bubble_sort, list_to_sort))
                 bubble_sort_gen = bubble_sort(list_to_sort)
                 canvas.after(int(speed_slider.get()), animate_graph, canvas, bubble_sort_gen, speed_slider, run_algorithm_button, step_counts)
             case "Selection Sort":
-                time.set(benchmark_algorithm_microseconds(selection_sort, list_to_sort))
-                print(f"Running Selection Sort: {time.get()}")
+                time_benchmark.set(benchmark_algorithm_microseconds(selection_sort, list_to_sort))
                 selection_sort_gen = selection_sort(list_to_sort)
                 canvas.after(int(speed_slider.get()), animate_graph, canvas, selection_sort_gen, speed_slider, run_algorithm_button, step_counts)
             case "Insertion Sort":
-                time.set(benchmark_algorithm_microseconds(insertion_sort, list_to_sort))
-                print(f"Running Insertion Sort: {time.get()}")
+                time_benchmark.set(benchmark_algorithm_microseconds(insertion_sort, list_to_sort))
                 insertion_sort_gen = insertion_sort(list_to_sort)
                 canvas.after(int(speed_slider.get()), animate_graph, canvas, insertion_sort_gen, speed_slider, run_algorithm_button, step_counts)
             case "Merge Sort":
-                time.set(benchmark_algorithm_microseconds(merge_sort, list_to_sort))
-                print(f"Running Merge Sort: {time.get()}")
+                time_benchmark.set(benchmark_algorithm_microseconds(merge_sort, list_to_sort))
                 merge_sort_gen = merge_sort(list_to_sort)
                 canvas.after(int(speed_slider.get()), animate_graph, canvas, merge_sort_gen, speed_slider, run_algorithm_button, step_counts)
             case _:
@@ -281,14 +292,26 @@ def main():
                 # Gives user message to choose algorithm
                 user_message.config(text="Choose Algorithm")
     
-    # Create title for selected algorithm
+    def control_speed_left(*args):
+        speed_slider.set(speed_slider.get()-1)
+        root.focus_set()
+    def control_speed_right(*args):
+        speed_slider.set(speed_slider.get()+1)
+        root.focus_set()
+
+    # Keybinds
+    root.bind_all("<Return>", lambda event: run_algorithm(array_size.get()) if (run_algorithm_button['state'] != "disabled") else user_message.config(text="Already running"))
+    root.bind_all("<Escape>", quit_algorithm)
+    root.bind_all("<Left>", control_speed_left)
+    root.bind_all("<Right>", control_speed_right)
+
+    # Create message space for user
     user_message = ttk.Label(root, text="")
     user_message.config(font=("Arial Rounded MT", 12), foreground="red")
     user_message.pack(pady=(10,0))
 
     # Function to update the selected algorithm title when the user selects an algorithm
     def algorithm_changed(*args):
-        print("Changed algorithm to", selected_algorithm.get())
         user_message.config(text="")
         match selected_algorithm.get():
             case "Bubble Sort":
