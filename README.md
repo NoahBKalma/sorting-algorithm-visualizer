@@ -1,7 +1,7 @@
 # Sorting Algorithm Visualizer
 
 A Python GUI application that visually demonstrates how different sorting algorithms work.  
-The program uses **Tkinter** to animate sorting operations step-by-step, highlighting comparisons and swaps in real time.
+The program uses Tkinter to animate sorting operations step-by-step, highlighting comparisons and swaps in real time.
 
 This tool is useful for learning how common sorting algorithms behave and for visually understanding their performance differences.
 
@@ -26,7 +26,7 @@ This tool is useful for learning how common sorting algorithms behave and for vi
 - Insertion Sort
 - Merge Sort
 
-Each algorithm is implemented in the `algorithms/` folder and designed as a **generator** that yields intermediate steps for visualization.
+Each algorithm is implemented in the `algorithms/` folder and designed as a generator that yields intermediate steps for visualization.
 
 ---
 
