@@ -178,23 +178,25 @@ def main():
     time_display.pack(padx=40, pady=10)
 
     # Create Canvas for the algorithms to be drawn on
-    canvas = tk.Canvas(root, width=650, height=400, bg="gray") 
+    canvas = tk.Canvas(root, width=650, height=400, bg="gray", borderwidth=2, relief="solid") 
     canvas.config(highlightthickness=0)   
     canvas.pack(pady=(10,0))
 
     # Create legend on canvas
-    legend = tk.Frame(canvas, width=130, height=50, bg="alice blue")
+    legend = tk.Frame(canvas, width=130, height=55, bg="alice blue", borderwidth=2, relief="solid")
     legend.place(x=10, y=10)
     legend.propagate(False)
 
     # Add labels to legend
-    comp_label = ttk.Label(legend, text="Green: Comparison", foreground="green", background="alice blue", font=("Arial Rounded MT", 10))
+    comp_label = ttk.Label(legend, text="Green: Comparison")
+    comp_label.config(foreground="green", background="alice blue", font=("Arial Rounded MT", 10))
     comp_label.pack(side="top", anchor="nw", padx=(5,0), pady=(5,0))
 
-    swap_label = ttk.Label(legend, text="Red: Swap", foreground="red", background="alice blue", font=("Arial Rounded MT", 10))
+    swap_label = ttk.Label(legend, text="Red: Swap")
+    swap_label.config(foreground="red", background="alice blue", font=("Arial Rounded MT", 10))
     swap_label.pack(side="bottom", anchor="sw", padx=(5,0), pady=(0,5))
 
-    # Create frame to house the options for the algorithm
+    # Create frame to house the options fors the algorithm
     options_frame = tk.Frame(root)
     options_frame.pack()
     
@@ -300,7 +302,7 @@ def main():
         root.focus_set()
 
     # Keybinds
-    root.bind_all("<Return>", lambda event: run_algorithm(array_size.get()) if (run_algorithm_button['state'] != "disabled") else user_message.config(text="Already running"))
+    root.bind_all("<Return>", lambda event: run_algorithm(array_size.get()) if (run_algorithm_button["state"] != "disabled") else user_message.config(text="Already running"))
     root.bind_all("<Escape>", quit_algorithm)
     root.bind_all("<Left>", control_speed_left)
     root.bind_all("<Right>", control_speed_right)
