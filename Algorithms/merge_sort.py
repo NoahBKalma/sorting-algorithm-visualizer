@@ -3,6 +3,7 @@ def merge_sort(arr):
     Breaks up an array into half, and continues recursively until each array is sorted
     Then it merges each array, working back uptil the entire array is sorted
     '''
+
     def _merge_sort(arr, left, right):
         '''
         Recursive method to sort the lists, uses merge method to combine
@@ -69,46 +70,46 @@ def merge_sort(arr):
     yield from _merge_sort(arr, 0, len(arr) - 1)
 
 
-    '''
+'''
 
-    Working merge_sort algorithm but not for my animator
+Working merge_sort algorithm but not for my animator
 
-    def merge_sort(arr):
-        
-        # If the array is length 1, return it
-        arr_len = len(arr)
-        if len(arr) <= 1:
-            return arr
-        
-        # Split array
-        arr_l = arr[:arr_len//2]
-        arr_r = arr[arr_len//2:]
-        
-        # Yields from left then right array
-        left = yield from merge_sort(arr_l)
-        right = yield from merge_sort(arr_r)
+def merge_sort(arr):
+    
+    # If the array is length 1, return it
+    arr_len = len(arr)
+    if len(arr) <= 1:
+        return arr
+    
+    # Split array
+    arr_l = arr[:arr_len//2]
+    arr_r = arr[arr_len//2:]
+    
+    # Sorts the left then right array
+    left = merge_sort(arr_l)
+    right = merge_sort(arr_r)
 
-        # Merge Arrays until one is empty, then add the rest of the non-empty list if there is anything
-        merged_arr = []
-        i=j=0
+    # Merge Arrays until one is empty, then add the rest of the non-empty list if there is anything
+    merged_arr = []
+    i=j=0
 
-        while i < len(left) and j < len(right):
-             if left[i] < right[j]:
-                 merged_arr.append(left[i])
-                 i += 1
-             else:
-                 merged_arr.append(right[j])
-                 j += 1
+    while i < len(left) and j < len(right):
+         if left[i] < right[j]:
+             merged_arr.append(left[i])
+             i += 1
+         else:
+             merged_arr.append(right[j])
+             j += 1
 
-        merged_arr.extend(left[i:])
-        merged_arr.extend(right[j:])
-
-
-        # Yield for animation, return for recursion
-        yield merged_arr, i, j, "comparison"
-        return merged_arr
+    # Adds leftovers to combined list
+    merged_arr.extend(left[i:])
+    merged_arr.extend(right[j:])
 
 
-    for step in merge_sort([1,2,4,6,7,4,2,3,5]):
-        print(step)
-    '''
+    # Return for recursion and final
+    return merged_arr
+
+
+print(merge_sort([1,2,4,6,7,4,2,3,5]))
+
+'''

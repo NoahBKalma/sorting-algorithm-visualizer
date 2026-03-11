@@ -47,6 +47,9 @@ git clone https://github.com/NoahBKalma/sorting-algorithm-visualizer
 python main.py
 ```
 
+### Demo
+![demo image](pic_demo.png "Demo Image")
+
 ### Steps:
 - Select a sorting algorithm
 - Enter an array size

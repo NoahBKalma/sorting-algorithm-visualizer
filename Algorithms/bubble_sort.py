@@ -1,7 +1,7 @@
 def bubble_sort(arr):
 	'''
-		Bubble sort works by comparing adjacent elements and swapping them if they are in the wrong order.
-		The algorithm repeats this process until the entire list is sorted.
+	Bubble sort works by comparing adjacent elements and swapping them if they are in the wrong order.
+	The algorithm repeats this process until the entire list is sorted.
 	'''
 
 	# Set the upper bound for the unsorted portion of the list

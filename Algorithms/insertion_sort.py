@@ -1,5 +1,10 @@
 def insertion_sort(arr):
-    
+    '''
+    Insertion sort works by iterating through the list until it finds a number smaller (out of place)
+    It then moves it one by one and repeats this until the whole list is sorted
+    '''
+
+
     # Iterates through the array
     for i in range(1, len(arr)):
         
