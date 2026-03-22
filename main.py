@@ -196,7 +196,7 @@ def main():
     swap_label.config(foreground="red", background="alice blue", font=("Arial Rounded MT", 10))
     swap_label.pack(side="bottom", anchor="sw", padx=(5,0), pady=(0,5))
 
-    # Create frame to house the options fors the algorithm
+    # Create frame to house the options for the algorithm
     options_frame = tk.Frame(root)
     options_frame.pack()
     

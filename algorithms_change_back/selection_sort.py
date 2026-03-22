@@ -1,5 +1,10 @@
 def selection_sort(arr):
-    
+    '''
+    Selection sort works by iterating through the list and finding the smallest value.
+    It then builds the sorted list from the front, moving each smallest to the end of the sorted portion until everything is sorted.
+    '''
+
+
     for i in range(len(arr)-1):
         
         min_index = i
