@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Event, Message, ttk
+from tkinter import ttk
 from random import shuffle
 import time
 
@@ -7,7 +7,7 @@ from algorithms.bubble_sort import bubble_sort
 from algorithms.insertion_sort import insertion_sort
 from algorithms.selection_sort import selection_sort
 from algorithms.merge_sort import merge_sort
-  
+from algorithms.quick_sort import quick_sort  
 
 def plot_graph(canvas, curr_list, j, k, step_type):
     '''
@@ -112,7 +112,7 @@ def main():
     title.pack(pady=(15,0))
     
     # Create and pack the algorithm selector
-    algorithms = ["Bubble Sort", "Selection Sort", "Insertion Sort", "Merge Sort"]
+    algorithms = ["Bubble Sort", "Selection Sort", "Insertion Sort", "Merge Sort", "Quick Sort"]
     selected_algorithm = tk.StringVar()
 
     algorithm_dropdown = ttk.Combobox(root, values=algorithms, textvariable=selected_algorithm, state="readonly")
@@ -288,6 +288,10 @@ def main():
                 time_benchmark.set(benchmark_algorithm_microseconds(merge_sort, list_to_sort))
                 merge_sort_gen = merge_sort(list_to_sort)
                 canvas.after(int(speed_slider.get()), animate_graph, canvas, merge_sort_gen, speed_slider, run_algorithm_button, step_counts)
+            case "Quick Sort":
+                time_benchmark.set(benchmark_algorithm_microseconds(quick_sort, list_to_sort))
+                quick_sort_gen = quick_sort(list_to_sort)
+                canvas.after(int(speed_slider.get()), animate_graph, canvas, quick_sort_gen, speed_slider, run_algorithm_button, step_counts)
             case _:
                 # Re-enables run button if nothing selected
                 run_algorithm_button.config(state="active")
@@ -323,6 +327,8 @@ def main():
             case "Insertion Sort":
                 time_complexity.set("Time Complexity: O(n\u00B2)")
             case "Merge Sort":
+                time_complexity.set("Time Complexity: O(nlog(n))")
+            case "Quick Sort":
                 time_complexity.set("Time Complexity: O(nlog(n))")
         
     # Runs the algorithm_changed function when the user selects an algorithm
